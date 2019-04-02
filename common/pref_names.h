@@ -34,6 +34,7 @@ extern const char kReferralAttemptCount[];
 extern const char kReferralCheckedForPromoCodeFile[];
 extern const char kHTTPSEVerywhereControlType[];
 extern const char kNoScriptControlType[];
+extern const char kAdControlType[];
 extern const char kGoogleLoginControlType[];
 extern const char kFBEmbedControlType[];
 extern const char kTwitterEmbedControlType[];
