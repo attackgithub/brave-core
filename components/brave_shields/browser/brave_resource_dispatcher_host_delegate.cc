@@ -20,15 +20,6 @@ BraveResourceDispatcherHostDelegate::BraveResourceDispatcherHostDelegate() {
   g_brave_browser_process->ad_block_custom_filters_service()->Start();
   g_brave_browser_process->ad_block_regional_service_manager()->Start();
   g_brave_browser_process->https_everywhere_service()->Start();
-  // Ensure that all services that observe the local data files service
-  // are created before calling Start().
-  g_brave_browser_process->autoplay_whitelist_service();
-#if BUILDFLAG(ENABLE_EXTENSIONS)
-  g_brave_browser_process->extension_whitelist_service();
-#endif
-  g_brave_browser_process->referrer_whitelist_service();
-  g_brave_browser_process->tracking_protection_service();
-  // Now start the local data files service, which calls all observers.
   g_brave_browser_process->local_data_files_service()->Start();
 }
 

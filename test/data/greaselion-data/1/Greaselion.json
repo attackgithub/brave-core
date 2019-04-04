@@ -1,0 +1,48 @@
+[
+    {
+        "urls": [
+            "https://www.example.com/*"
+        ],
+        "scripts": [
+            "scripts/example-com.js"
+        ]
+    },
+    {
+        "urls": [
+            "https://www.example.*/*"
+        ],
+        "scripts": [
+            "scripts/example-star.js"
+        ]
+    },
+    {
+        "urls": [
+            "http://www.a.com:*/*"
+        ],
+        "scripts": [
+            "scripts/a-com.js"
+        ]
+    },
+    {
+        "preconditions": {
+            "rewards-enabled": true
+        },
+        "urls": [
+            "https://pre1.example.com/*"
+        ],
+        "scripts": [
+            "scripts/example-com.js"
+        ]
+    },
+    {
+        "preconditions": {
+            "profile-on-the-record": true
+        },
+        "urls": [
+            "https://pre2.example.com/*"
+        ],
+        "scripts": [
+            "scripts/example-com.js"
+        ]
+    }
+]

@@ -1,0 +1,26 @@
+source_set("browser") {
+  sources = [
+    "greaselion_download_service.cc",
+    "greaselion_download_service.h",
+    "greaselion_service.h",
+    "greaselion_service_impl.cc",
+    "greaselion_service_impl.h",
+  ]
+
+  deps = [
+    "//base",
+    "//brave/components/brave_rewards/common",
+    "//brave/components/brave_rewards/browser",
+    "//components/keyed_service/content",
+    "//components/keyed_service/core",
+    "//components/prefs",
+    "//components/pref_registry",
+    "//components/sessions",
+    "//url",
+    # for profile.h
+    "//components/domain_reliability",
+    "//content/public/browser",
+    "//content/public/common",
+  ]
+
+}

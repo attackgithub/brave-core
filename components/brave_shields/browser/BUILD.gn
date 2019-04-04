@@ -61,7 +61,6 @@ source_set("brave_shields") {
     "//chrome/common",
     "//third_party/leveldatabase",
   ]
-
   if (enable_extensions) {
     sources += [
       "extension_whitelist_service.cc",

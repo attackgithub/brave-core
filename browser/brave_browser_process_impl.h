@@ -35,6 +35,10 @@ class ReferrerWhitelistService;
 class TrackingProtectionService;
 }  // namespace brave_shields
 
+namespace greaselion {
+class GreaselionDownloadService;
+}  // namespace greaselion
+
 namespace extensions {
 class BraveTorClientUpdater;
 }
@@ -58,6 +62,7 @@ class BraveBrowserProcessImpl : public BrowserProcessImpl {
   brave_shields::ExtensionWhitelistService* extension_whitelist_service();
 #endif
   brave_shields::ReferrerWhitelistService* referrer_whitelist_service();
+  greaselion::GreaselionDownloadService* greaselion_download_service();
   brave_shields::TrackingProtectionService* tracking_protection_service();
   brave_shields::HTTPSEverywhereService* https_everywhere_service();
   brave_shields::LocalDataFilesService* local_data_files_service();
@@ -82,6 +87,8 @@ class BraveBrowserProcessImpl : public BrowserProcessImpl {
       extension_whitelist_service_;
   std::unique_ptr<brave_shields::ReferrerWhitelistService>
       referrer_whitelist_service_;
+  std::unique_ptr<greaselion::GreaselionDownloadService>
+      greaselion_download_service_;
   std::unique_ptr<brave_shields::TrackingProtectionService>
       tracking_protection_service_;
   std::unique_ptr<brave_shields::HTTPSEverywhereService>
