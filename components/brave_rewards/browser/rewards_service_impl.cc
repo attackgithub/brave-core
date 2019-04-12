@@ -2502,6 +2502,11 @@ void RewardsServiceImpl::MaybeShowNotificationAddFunds() {
         AsWeakPtr()));
 }
 
+void RewardsServiceImpl::MaybeShowNotificationAddFundsForTesting(
+    base::OnceCallback<void(bool)> callback) {
+  bat_ledger_->HasSufficientBalanceToReconcile(std::move(callback));
+}
+
 bool RewardsServiceImpl::ShouldShowNotificationAddFunds() const {
   base::Time next_time =
       profile_->GetPrefs()->GetTime(prefs::kRewardsAddFundsNotification);
@@ -2697,6 +2702,10 @@ void RewardsServiceImpl::SetLedgerEnvForTesting() {
 
 void RewardsServiceImpl::StartAutoContributeForTest() {
   bat_ledger_->StartAutoContribute();
+}
+
+void RewardsServiceImpl::CheckInsufficientFundsForTesting() {
+  MaybeShowNotificationAddFunds();
 }
 
 void RewardsServiceImpl::GetProduction(const GetProductionCallback& callback) {
