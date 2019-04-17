@@ -470,6 +470,12 @@ void RewardsServiceImpl::StartLedger() {
     }
   }
 
+  if (set_bat_ledger_for_testing_) {
+    bat_ledger_service_->Create(std::move(client_ptr_info),
+        MakeRequestAssociatedWithDedicatedPipe(&bat_ledger_));
+    return;
+  }
+
   bat_ledger_service_->Create(std::move(client_ptr_info),
       MakeRequest(&bat_ledger_));
 
@@ -1429,11 +1435,18 @@ void RewardsServiceImpl::TriggerOnGrant(ledger::Result result,
 void RewardsServiceImpl::GetGrantCaptcha(
     const std::string& promotion_id,
     const std::string& promotion_type) {
+  LOG(ERROR) << "=========CHECKING CONNECTED";
   if (!Connected()) {
+    LOG(ERROR) << "=========NOT CONNECTED";
+
     return;
   }
-
-  bat_ledger_->GetGrantCaptcha(promotion_id, promotion_type);
+  std::vector<std::string> headers;
+  headers.push_back("brave-product:brave-core");
+  headers.push_back("promotion-id:" + promotion_id);
+  headers.push_back("promotion-type:" + promotion_type);
+  LOG(ERROR) << "=======GOING TO BAT LEDGER";
+  bat_ledger_->GetGrantCaptcha(headers);
 }
 
 void RewardsServiceImpl::TriggerOnGrantCaptcha(const std::string& image,
@@ -2680,7 +2693,7 @@ void RewardsServiceImpl::OnTip(
 }
 
 bool RewardsServiceImpl::Connected() const {
-  return bat_ledger_.is_bound();
+  return bat_ledger_.is_bound() || set_bat_ledger_for_testing_;
 }
 
 void RewardsServiceImpl::SetLedgerEnvForTesting() {

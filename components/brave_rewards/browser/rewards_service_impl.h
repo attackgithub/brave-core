@@ -38,6 +38,8 @@
 #include "brave/components/brave_rewards/browser/extension_rewards_service_observer.h"
 #endif
 
+FORWARD_DECLARE_TEST(RewardsServiceTest, GetGrantCaptcha);
+
 namespace base {
 class OneShotTimer;
 class RepeatingTimer;
@@ -238,8 +240,11 @@ class RewardsServiceImpl : public RewardsService,
   void StartAutoContributeForTest();
 
  private:
-  FRIEND_TEST_ALL_PREFIXES(RewardsServiceTest, OnWalletProperties);
   friend class ::BraveRewardsBrowserTest;
+  friend class RewardsServiceTest;
+  friend class MockRewardsServiceImpl;
+  FRIEND_TEST_ALL_PREFIXES(RewardsServiceTest, OnWalletProperties);
+  FRIEND_TEST_ALL_PREFIXES(RewardsServiceTest, GetGrantCaptcha);
 
   const base::OneShotEvent& ready() const { return ready_; }
   void OnLedgerStateSaved(ledger::LedgerCallbackHandler* handler,
@@ -506,6 +511,10 @@ class RewardsServiceImpl : public RewardsService,
                                    int32_t result,
                                    ledger::PublisherInfoPtr publisher);
 
+  void SetBatLedgerForTesting(
+      //std::unique_ptr<bat_ledger::mojom::BatLedger> mock_bat_ledger,
+      bool testing);
+
   bool Connected() const;
   void ConnectionClosed();
 
@@ -514,6 +523,8 @@ class RewardsServiceImpl : public RewardsService,
       bat_ledger_client_binding_;
   bat_ledger::mojom::BatLedgerAssociatedPtr bat_ledger_;
   bat_ledger::mojom::BatLedgerServicePtr bat_ledger_service_;
+  bat_ledger::mojom::AssociatedBinding<bat_ledger::mojom::BatLedger>
+      bat_ledger_binding_for_testing;
 
 #if BUILDFLAG(ENABLE_EXTENSIONS)
   std::unique_ptr<ExtensionRewardsServiceObserver>
@@ -539,12 +550,14 @@ class RewardsServiceImpl : public RewardsService,
   std::vector<BitmapFetcherService::RequestId> request_ids_;
   std::unique_ptr<base::OneShotTimer> notification_startup_timer_;
   std::unique_ptr<base::RepeatingTimer> notification_periodic_timer_;
-
+  bool set_bat_ledger_for_testing_;
   uint32_t next_timer_id_;
 
   GetTestResponseCallback test_response_callback_;
 
   DISALLOW_COPY_AND_ASSIGN(RewardsServiceImpl);
+
+  FRIEND_TEST_ALL_PREFIXES(RewardsServiceTest, SetBatLedgerForTesting);
 };
 
 }  // namespace brave_rewards
