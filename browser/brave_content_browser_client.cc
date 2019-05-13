@@ -358,3 +358,22 @@ std::string BraveContentBrowserClient::GetUserAgent() const {
   return ChromeContentBrowserClient::GetUserAgent() +
       " Brave/" + version_info::GetMajorVersionNumber();
 }
+
+void BraveContentBrowserClient::GetStoragePartitionConfigForSite(
+    content::BrowserContext* browser_context,
+    const GURL& site,
+    bool can_be_default,
+    std::string* partition_domain,
+    std::string* partition_name,
+    bool* in_memory) {
+  ChromeContentBrowserClient::GetStoragePartitionConfigForSite(
+      browser_context, site, can_be_default, partition_domain, partition_name,
+      in_memory);
+  if (browser_context->IsTorProfile()) {
+    if (!site.is_empty()) {
+      *partition_domain = site.host();
+      partition_name->clear();
+    }
+    *in_memory = true;
+  }
+}
