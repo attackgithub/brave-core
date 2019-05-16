@@ -125,7 +125,7 @@ Result ClientState::FromJson(
   }
 
   if (client.HasMember("pageScoreHistory")) {
-    for (const auto& history : client["pageScoreHistory"].GetArray()) {
+    for (const auto& history : client["pageScoreHistory"][locale.c_str()].GetArray()) {
       std::vector<double> page_scores = {};
 
       for (const auto& page_score : history.GetArray()) {
@@ -233,6 +233,9 @@ void SaveToJson(JsonWriter* writer, const ClientState& state) {
   writer->String(state.last_page_classification.c_str());
 
   writer->String("pageScoreHistory");
+  writer->StartObject();
+  writer->String(state.locale.c_str());
+  writer->StartObject();
   writer->StartArray();
   for (const auto& page_score : state.page_score_history) {
     writer->StartArray();
@@ -242,6 +245,8 @@ void SaveToJson(JsonWriter* writer, const ClientState& state) {
     writer->EndArray();
   }
   writer->EndArray();
+  writer->EndObject();
+  writer->EndObject();
 
   writer->String("creativeSetHistory");
   writer->StartObject();
