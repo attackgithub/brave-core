@@ -81,7 +81,8 @@ void AdsImpl::Initialize() {
 void AdsImpl::InitializeStep2() {
   client_->SetLocales(ads_client_->GetLocales());
 
-  LoadUserModel();
+  auto locale = ads_client_->GetAdsLocale();
+  ChangeLocale(locale);
 }
 
 void AdsImpl::InitializeStep3() {
@@ -158,20 +159,23 @@ void AdsImpl::OnUserModelLoaded(const Result result, const std::string& json) {
 
   BLOG(INFO) << "Successfully loaded user model";
 
-  InitializeUserModel(json);
+  auto locale = client_->GetLocale();
+  InitializeUserModel(json, locale);
 
   if (!IsInitialized()) {
     InitializeStep3();
   }
 }
 
-void AdsImpl::InitializeUserModel(const std::string& json) {
+void AdsImpl::InitializeUserModel(
+    const std::string& json,
+    const std::string& locale) {
   // TODO(Terry Mancey): Refactor function to use callbacks
 
   BLOG(INFO) << "Initializing user model";
 
   user_model_.reset(usermodel::UserModel::CreateInstance());
-  user_model_->InitializePageClassifier(json);
+  user_model_->InitializePageClassifier(json, locale);
 
   BLOG(INFO) << "Initialized user model";
 }
@@ -445,7 +449,7 @@ std::string AdsImpl::GetWinnerOverTimeCategory() {
 
 std::string AdsImpl::GetWinningCategory(
     const std::vector<double>& page_score) {
-  return user_model_->WinningCategory(page_score);
+  return user_model_->GetWinningCategory(page_score);
 }
 
 std::string AdsImpl::GetWinningCategory(const std::string& html) {
