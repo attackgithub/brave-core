@@ -7,6 +7,7 @@
 
 #include <utility>
 #include <memory>
+#include <stdint.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -1151,18 +1152,19 @@ void RewardsDOMHandler::OnGetPendingContributions(
 
 void RewardsDOMHandler::RemovePendingContribution(
     const base::ListValue* args) {
-  if (rewards_service_) {
-    std::string publisher_key;
-    std::string viewing_id;
-    int added_date;
-    args->GetString(0, &publisher_key);
-    args->GetString(1, &viewing_id);
-    args->GetInteger(2, &added_date);
-    rewards_service_->RemovePendingContributionUI(
-        publisher_key,
-        viewing_id,
-        static_cast<uint64_t>(added_date));
+  CHECK_EQ(3U, args->GetSize());
+  if (!rewards_service_) {
+    return;
   }
+
+  const std::string publisher_key = args->GetList()[0].GetString();
+  const std::string viewing_id = args->GetList()[1].GetString();
+  const std::string temp = args->GetList()[2].GetString();
+  uint64_t added_date = std::stoull(temp);
+  rewards_service_->RemovePendingContributionUI(
+      publisher_key,
+      viewing_id,
+      added_date);
 }
 
 void RewardsDOMHandler::RemoveAllPendingContributions(

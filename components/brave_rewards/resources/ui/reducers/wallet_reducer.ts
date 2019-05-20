@@ -240,7 +240,7 @@ const walletReducer: Reducer<Rewards.State | undefined> = (state: Rewards.State,
       chrome.send('brave_rewards.removePendingContribution', [
         action.payload.publisherKey,
         action.payload.viewingId,
-        action.payload.addedDate
+        action.payload.addedDate.toString()
       ])
       break
     }
