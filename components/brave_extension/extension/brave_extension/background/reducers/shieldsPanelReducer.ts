@@ -2,10 +2,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+// Types
 import * as shieldsPanelTypes from '../../constants/shieldsPanelTypes'
 import * as windowTypes from '../../constants/windowTypes'
 import * as tabTypes from '../../constants/tabTypes'
 import * as webNavigationTypes from '../../constants/webNavigationTypes'
+import { State, Tab } from '../../types/state/shieldsPannelState'
+import { Actions } from '../../types/actions/index'
+
+// State helpers
+import * as shieldsPanelState from '../../state/shieldsPanelState'
+import * as noScriptState from '../../state/noScriptState'
+
+// APIs
 import {
   setAllowBraveShields,
   setAllowAds,
@@ -20,10 +29,10 @@ import {
 } from '../api/shieldsAPI'
 import { setBadgeText, setIcon } from '../api/browserActionAPI'
 import { reloadTab } from '../api/tabsAPI'
-import * as shieldsPanelState from '../../state/shieldsPanelState'
-import { State, Tab } from '../../types/state/shieldsPannelState'
-import { Actions } from '../../types/actions/index'
+
+// Helpers
 import { getTotalResourcesBlocked } from '../../helpers/shieldsUtils'
+import { getAllowedScriptsOrigins } from '../../helpers/noScriptUtils'
 
 const updateShieldsIconBadgeText = (state: State) => {
   const tabId: number = shieldsPanelState.getActiveTabId(state)
@@ -286,7 +295,7 @@ export default function shieldsPanelReducer (state: State = { tabs: {}, windows:
         console.error('Active tab not found')
         break
       }
-      setAllowScriptOriginsOnce(action.origins, tabData.id)
+      setAllowScriptOriginsOnce(getAllowedScriptsOrigins(tabData.noScriptInfo), tabData.id)
         .then(() => {
           requestShieldPanelData(shieldsPanelState.getActiveTabId(state))
           reloadTab(tabData.id, true).catch(() => {
@@ -307,6 +316,9 @@ export default function shieldsPanelReducer (state: State = { tabs: {}, windows:
       const tabId: number = shieldsPanelState.getActiveTabId(state)
       state = shieldsPanelState.changeAllNoScriptSettings(state, tabId, action.shouldBlock)
       break
+    }
+    case shieldsPanelTypes.SET_FINAL_SCRIPTS_BLOCKED_ONCE_STATE: {
+      state = noScriptState.setFinalScriptsBlockedState(state)
     }
   }
   return state

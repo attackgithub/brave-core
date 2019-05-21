@@ -92,3 +92,7 @@ export interface ResetNoScriptInfo {
 export interface ChangeAllNoScriptSettings {
   (state: State, tabId: number, shouldBlock: boolean): State
 }
+
+export interface PersistAllNoScriptSettings {
+  (state: State, tabId: number): State
+}
