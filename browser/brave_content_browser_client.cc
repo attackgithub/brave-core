@@ -372,7 +372,7 @@ void BraveContentBrowserClient::GetStoragePartitionConfigForSite(
   if (browser_context->IsTorProfile()) {
     if (!site.is_empty()) {
       *partition_domain = site.host();
-      partition_name->clear();
+      *partition_name = "tor";
     }
     *in_memory = true;
   }
