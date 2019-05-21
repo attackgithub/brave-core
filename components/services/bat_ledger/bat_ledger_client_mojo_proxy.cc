@@ -96,6 +96,13 @@ void OnExcludedNumberDB(
   callback(result);
 }
 
+void OnGetCountryCodes(
+    const ledger::GetCountryCodesCallback& callback,
+    const std::vector<int32_t>& limited_countries) {
+  callback(limited_countries);
+}
+
+
 }  // namespace
 
 BatLedgerClientMojoProxy::BatLedgerClientMojoProxy(
@@ -726,6 +733,17 @@ void BatLedgerClientMojoProxy::GetExcludedPublishersNumberDB(
 
   bat_ledger_client_->GetExcludedPublishersNumberDB(
       base::BindOnce(&OnExcludedNumberDB, std::move(callback)));
+}
+
+void BatLedgerClientMojoProxy::GetCountryCodes(
+    const std::vector<std::string>& limited_countries,
+    ledger::GetCountryCodesCallback callback) {
+  if (!Connected()) {
+    return;
+  }
+
+  bat_ledger_client_->GetCountryCodes(limited_countries,
+      base::BindOnce(&OnGetCountryCodes, std::move(callback)));
 }
 
 }  // namespace bat_ledger
