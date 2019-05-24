@@ -145,7 +145,7 @@ bool AdsImpl::IsInitialized() {
 }
 
 void AdsImpl::LoadUserModel() {
-  auto locale = std::string("ja");  // client_->GetLocale();
+  auto locale = client_->GetLocale();
   auto callback = std::bind(&AdsImpl::OnUserModelLoaded, this, _1, _2);
   ads_client_->LoadUserModelForLocale(locale, callback);
 }
@@ -160,7 +160,7 @@ void AdsImpl::OnUserModelLoaded(const Result result, const std::string& json) {
   BLOG(INFO) << "Successfully loaded user model";
 
   auto locale = client_->GetLocale();
-  auto region = std::string("ja");  // helper::Locale::GetCountryCode(locale);
+  auto region = helper::Locale::GetCountryCode(locale);
   InitializeUserModel(json, region);
 
   if (!IsInitialized()) {
