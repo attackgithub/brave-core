@@ -160,7 +160,8 @@ void AdsImpl::OnUserModelLoaded(const Result result, const std::string& json) {
   BLOG(INFO) << "Successfully loaded user model";
 
   auto locale = client_->GetLocale();
-  InitializeUserModel(json, locale);
+  auto region = helper::Locale::GetCountryCode(locale);
+  InitializeUserModel(json, region);
 
   if (!IsInitialized()) {
     InitializeStep3();
@@ -169,13 +170,13 @@ void AdsImpl::OnUserModelLoaded(const Result result, const std::string& json) {
 
 void AdsImpl::InitializeUserModel(
     const std::string& json,
-    const std::string& locale) {
+    const std::string& region) {
   // TODO(Terry Mancey): Refactor function to use callbacks
 
   BLOG(INFO) << "Initializing user model";
 
   user_model_.reset(usermodel::UserModel::CreateInstance());
-  user_model_->InitializePageClassifier(json, locale);
+  user_model_->InitializePageClassifier(json, region);
 
   BLOG(INFO) << "Initialized user model";
 }
