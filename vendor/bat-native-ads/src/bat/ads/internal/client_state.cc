@@ -124,17 +124,31 @@ Result ClientState::FromJson(
     last_page_classification = client["last_page_classification"].GetString();
   }
 
-  // if (client.HasMember("pageScoreHistory")) {
-  //   for (const auto& history : client["pageScoreHistory"][locale.c_str()].GetArray()) {
-  //     std::vector<double> page_scores = {};
+  if (client.HasMember("pageScoreHistory")) {
+    auto locale_page_score_history = client["pageScoreHistory"].GetObject();
 
-  //     for (const auto& page_score : history.GetArray()) {
-  //       page_scores.push_back(page_score.GetDouble());
-  //     }
+    if (locale_page_score_history.HasMember(locale.c_str())) {
+      for (const auto& history :
+          locale_page_score_history[locale.c_str()].GetArray()) {
+        std::vector<double> page_scores;
+        for (const auto& page_score : history.GetArray()) {
+          page_scores.push_back(page_score.GetDouble());
+        }
 
-  //     page_score_history.push_back(page_scores);
-  //   }
-  // }
+        page_score_history.push_back(page_scores);
+      }
+    } else {
+      // Load legacy page scores which will then be migrated
+      for (const auto& history : client["pageScoreHistory"].GetArray()) {
+        std::vector<double> page_scores;
+        for (const auto& page_score : history.GetArray()) {
+          page_scores.push_back(page_score.GetDouble());
+        }
+
+        page_score_history.push_back(page_scores);
+      }
+    }
+  }
 
   if (client.HasMember("creativeSetHistory")) {
     for (const auto& history : client["creativeSetHistory"].GetObject()) {
@@ -232,21 +246,19 @@ void SaveToJson(JsonWriter* writer, const ClientState& state) {
   writer->String("last_page_classification");
   writer->String(state.last_page_classification.c_str());
 
-  // writer->String("pageScoreHistory");
-  // writer->StartObject();
-  // writer->String(state.locale.c_str());
-  // writer->StartObject();
-  // writer->StartArray();
-  // for (const auto& page_score : state.page_score_history) {
-  //   writer->StartArray();
-  //   for (const auto& score : page_score) {
-  //     writer->Double(score);
-  //   }
-  //   writer->EndArray();
-  // }
-  // writer->EndArray();
-  // writer->EndObject();
-  // writer->EndObject();
+  writer->String("pageScoreHistory");
+  writer->StartObject();
+  writer->String(state.locale.c_str());
+  writer->StartArray();
+  for (const auto& page_score : state.page_score_history) {
+    writer->StartArray();
+    for (const auto& score : page_score) {
+      writer->Double(score);
+    }
+    writer->EndArray();
+  }
+  writer->EndArray();
+  writer->EndObject();
 
   writer->String("creativeSetHistory");
   writer->StartObject();
